@@ -15,7 +15,7 @@ export default function Home() {
   }
   /* Fetch current board on page load */
   useEffect(() => {
-    fetch("http://localhost:3001/fen")
+    fetch("https://chessbotapi.onrender.com/fen")
       .then((res) => res.json())
       .then((data) => {
         setFen(data.fen);
@@ -31,7 +31,7 @@ export default function Home() {
   /* Fetch current board every 2s */
   useEffect(() => {
     const interval = setInterval(() => {
-      fetch("http://localhost:3001/fen")
+      fetch("https://chessbotapi.onrender.com/fen")
         .then((res) => res.json())
         .then((data) => {
           setFen(data.fen);
@@ -49,7 +49,7 @@ export default function Home() {
 
   /* Send move to api */
   function sendMove(move: move) {
-    fetch("http://localhost:3001/move", {
+    fetch("https://chessbotapi.onrender.com/move", {
       method: "POST",
       body: JSON.stringify(move),
       headers: {
@@ -66,7 +66,7 @@ export default function Home() {
 
   /* Create new game on api and reset board */
   function newGame() {
-    fetch("http://localhost:3001/new", {
+    fetch("https://chessbotapi.onrender.com/new", {
       method: "POST",
     })
       .then((res) => res.json())
