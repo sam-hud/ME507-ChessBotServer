@@ -89,7 +89,7 @@ export default function Home() {
     <div className="flex-container">
       <div className="flex-content">
         <h2>{feedback}</h2>
-        <Chessboard position={fen} onPieceDrop={onDrop} boardWidth={400} />
+        <Chessboard position={fen} onPieceDrop={onDrop} boardWidth={350} />
         <button
           onClick={() => {
             newGame();
