@@ -2,11 +2,13 @@ import { Chessboard } from "react-chessboard";
 import { useState, useEffect } from "react";
 
 export default function Home() {
+  /* useState variables for dynamically updating the page */
   const [fen, setFen] = useState(
+    // FEN string to change the board element
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
   );
-  const [feedback, setFeedback] = useState("Make a move!");
-  const [turn, setTurn] = useState("w");
+  const [feedback, setFeedback] = useState("White's turn"); //Feedback header
+  const [turn, setTurn] = useState("w"); //Turn indicator
 
   interface move {
     from: string;
@@ -26,7 +28,7 @@ export default function Home() {
     } else {
       setFeedback("Black's turn");
     }
-  }, [turn]);
+  }, [turn]); //Refetch on load and when turn changes
 
   /* Fetch current board every 2s */
   useEffect(() => {
@@ -45,7 +47,7 @@ export default function Home() {
     }, 2000); //Fetch board status every 2s
 
     return () => clearInterval(interval);
-  }, [turn]);
+  }, [turn]); //Refetch every 2s or when turn changes
 
   /* Send move to api */
   function sendMove(move: move) {
@@ -58,8 +60,8 @@ export default function Home() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setFen(data.fen); //Update board
-        setTurn(data.turn);
+        setFen(data.fen); // Update board
+        setTurn(data.turn); // Update turn
       });
     return true;
   }
@@ -76,15 +78,17 @@ export default function Home() {
       });
   }
 
-  /* Handle user input */
+  /* Handle user input (when piece is dropped) */
   function onDrop(sourceSquare: string, targetSquare: string) {
     let move = { from: sourceSquare, to: targetSquare };
     if (turn === "w") {
+      // Only send move if it is white's turn
       sendMove(move);
     } else setFeedback("Not your turn!");
     return true;
   }
 
+  /* Render board dynamically */
   return (
     <div className="flex-container">
       <div className="flex-content">
