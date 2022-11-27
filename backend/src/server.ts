@@ -1,20 +1,12 @@
-import { Express } from "express";
+import express from "express";
 import api from "./routes/api";
 
-const express = require("express"); // 1. includes Express
-const app: Express = express(); // 2. initializes Express
-const cors = require("cors");
+const server = express();
 
-const PORT = process.env.PORT || 3000;
+const port = 3001;
 
-app.use(express.json()); // Enables JSON parsing
-app.use(cors());
+server.use("/", api);
 
-console.log("Backend running");
-
-// Routes go here
-app.use("/", api); // 3. adds the recipe endpoints
-
-app.listen(PORT, () => {
-  console.log(`server started on port ${PORT}`);
+server.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
