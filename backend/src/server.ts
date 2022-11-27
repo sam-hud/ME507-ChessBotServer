@@ -4,7 +4,7 @@ const express = require("express"); // Includes express
 const server = express();
 const cors = require("cors");
 
-const port = 443;
+const port = process.env.PORT || 3001;
 
 server.use(cors());
 server.use(express.json()); // Enables JSON parsing
