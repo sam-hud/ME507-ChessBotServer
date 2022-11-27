@@ -57,17 +57,16 @@ h2{
   text-align: center;
 }
 .flex-content{
-  flex-basis: 100px;
-  flex-grow: 1;
   background-color:var(--sandy-brown);
   border-radius: 20px;
   margin-top: 10px;
-  padding: 20px 20px 20px 20px;
+  padding: 10px;
 }
 
 button{
   background-color: var(--burnt-sienna); /* Green */
   border: none;
+  border-radius: 10px;
   color: var(--charcoal);
   margin-top: 10px;
   padding: 15px 32px;
@@ -87,9 +86,8 @@ button:hover {
 header{
   display: flex;
   background-color: var(--charcoal);
-  flex-direction: row;
-  align-items: baseline;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: space-between;
   color:var(--maize-crayola);
   padding: 0 50px;
 }

@@ -8,7 +8,7 @@ export default function Navigation() {
       <h1>
         <Link to="/">Chessbot</Link>
       </h1>
-      <p>An ME507 project</p>
+      <a href="https://github.com/Dyruiz131/me507_Term_Project">GitHub Repo</a>
     </header>
   );
 }
