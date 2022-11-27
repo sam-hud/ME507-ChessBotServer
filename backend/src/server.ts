@@ -3,7 +3,7 @@ import api from "./routes/api";
 
 const server = express();
 
-const port = 3001;
+const port = 3000;
 
 server.use("/", api);
 
