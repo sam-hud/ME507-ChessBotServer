@@ -8,6 +8,13 @@ The backend api server is accessed [here](https://chessbotapi.onrender.com).
 
 ## Technology
 
+### Frontend
+
+- Node.js
+- React.js
+- TypeScript
+- Chess.js
+
 ### Backend
 
 - Node.js
@@ -15,13 +22,6 @@ The backend api server is accessed [here](https://chessbotapi.onrender.com).
 - TypeScript
 - Chess.js
 - CORS
-
-### Frontend
-
-- Node.js
-- React.js
-- TypeScript
-- Chess.js
 
 ## Deployment
 
