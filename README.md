@@ -26,5 +26,5 @@ The backend api server is accessed [here](https://chessbotapi.onrender.com).
 
 ## Deployment
 
-- Frontend: deployed using netlify [netlify](https://www.netlify.com).
+- Frontend: deployed using [netlify](https://www.netlify.com).
 - Backend: deployed using [render](https://render.com).
