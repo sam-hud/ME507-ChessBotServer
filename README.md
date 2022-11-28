@@ -14,6 +14,7 @@ The backend api server is accessed [here](https://chessbotapi.onrender.com).
 - React.js
 - TypeScript
 - Chess.js
+- react-chessboard
 
 ### Backend
 
