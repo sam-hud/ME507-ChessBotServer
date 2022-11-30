@@ -65,7 +65,7 @@ router.get("/acceptMoves", async (req: Request, res: Response) => {
 
 // set move status
 router.post("/acceptMoves", async (req: Request, res: Response) => {
-  acceptMoves = req.body.moveComplete;
+  acceptMoves = req.body.acceptMoves;
   res.send({ acceptMoves: acceptMoves });
 });
 
