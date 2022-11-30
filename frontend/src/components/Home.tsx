@@ -1,5 +1,6 @@
 import { Chessboard } from "react-chessboard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import e from "express";
 
 export default function Home() {
   /* useState variables for dynamically updating the page */
@@ -7,51 +8,70 @@ export default function Home() {
     // FEN string to change the board element
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
   );
-  const [feedback, setFeedback] = useState("White's turn"); //Feedback header
-  const [turn, setTurn] = useState("w"); //Turn indicator
 
   interface move {
     from: string;
     to: string;
     promotion?: string;
   }
-  /* Fetch current board on page load */
+  interface apiData {
+    fen: string;
+    turn: string;
+    moveComplete: boolean;
+    lastMove: move;
+  }
+  const [feedback, setFeedback] = useState("White's turn"); //Feedback header
+  const [status, setStatus] = useState("Waiting for input"); //Feedback header
+  const [game, setGame] = useState<apiData>({
+    fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    turn: "w",
+    moveComplete: true,
+    lastMove: { from: "", to: "", promotion: "" },
+  }); //Data from the API
+
+  /* Fetch current game data on page load */
   useEffect(() => {
-    fetch("https://chessbotapi.onrender.com/fen")
+    fetch("http://localhost:3001/")
       .then((res) => res.json())
       .then((data) => {
-        setFen(data.fen);
-        setTurn(data.turn);
+        setGame(data);
       });
-    if (turn === "w") {
-      setFeedback("White's turn");
-    } else {
-      setFeedback("Black's turn");
-    }
-  }, [turn]); //Refetch on load and when turn changes
+  }, []);
 
-  /* Fetch current board every 2s */
+  /* Fetch current game data every 2s */
   useEffect(() => {
     const interval = setInterval(() => {
-      fetch("https://chessbotapi.onrender.com/fen")
+      fetch("http://localhost:3001/")
         .then((res) => res.json())
         .then((data) => {
-          setFen(data.fen);
-          setTurn(data.turn);
+          setGame(data);
         });
-      if (turn === "w") {
-        setFeedback("White's turn");
-      } else {
-        setFeedback("Black's turn");
-      }
     }, 2000); //Fetch board status every 2s
 
     return () => clearInterval(interval);
-  }, [turn]); //Refetch every 2s or when turn changes
+  }, []);
+
+  /* Update the feedback header when the turn changes */
+  useEffect(() => {
+    if (game.turn === "w") {
+      setFeedback("White's turn");
+    } else if (game.turn === "b") {
+      setFeedback("Black's turn");
+    }
+  }, [game.turn]);
+
+  /* Update the status header when the move is complete */
+  useEffect(() => {
+    if (game.moveComplete) {
+      setStatus("Move complete. Waiting for input");
+    } else {
+      setStatus("Move in progress, please wait");
+    }
+  }, [game.moveComplete]);
 
   /* Send move to api */
-  function sendMove(move: move) {
-    fetch("https://chessbotapi.onrender.com/move", {
+  function sendMove(move: move | undefined) {
+    fetch("http://localhost:3001/move", {
       method: "POST",
       body: JSON.stringify(move),
       headers: {
@@ -60,31 +80,30 @@ export default function Home() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setFen(data.fen); // Update board
-        setTurn(data.turn); // Update turn
+        setGame(data);
       });
     return true;
   }
 
   /* Create new game on api and reset board */
   function newGame() {
-    fetch("https://chessbotapi.onrender.com/new", {
+    fetch("http://localhost:3001/new", {
       method: "POST",
     })
       .then((res) => res.json())
       .then((data) => {
-        setFen(data.fen); //Update board
-        setTurn(data.turn);
+        setGame(data);
       });
   }
 
   /* Handle user input (when piece is dropped) */
   function onDrop(sourceSquare: string, targetSquare: string) {
-    let move = { from: sourceSquare, to: targetSquare };
-    if (turn === "w") {
-      // Only send move if it is white's turn
-      sendMove(move);
-    } else setFeedback("Not your turn!");
+    if (game.moveComplete) {
+      sendMove({ from: sourceSquare, to: targetSquare });
+      setStatus("Move sent");
+    } else {
+      setStatus("Move in progress. Please wait.");
+    }
     return true;
   }
 
@@ -93,13 +112,21 @@ export default function Home() {
     <div className="flex-container">
       <div className="flex-content">
         <h2>{feedback}</h2>
-        <Chessboard position={fen} onPieceDrop={onDrop} boardWidth={350} />
+        <h3>{status}</h3>
+        <Chessboard position={game.fen} onPieceDrop={onDrop} boardWidth={350} />
         <button
           onClick={() => {
             newGame();
           }}
         >
           New Game
+        </button>
+        <button
+          onClick={() => {
+            undoMove();
+          }}
+        >
+          Undo
         </button>
       </div>
     </div>

@@ -3,17 +3,28 @@ import { Chess } from "chess.js";
 
 const router: Router = express.Router();
 let chess = new Chess();
-let moveComplete: boolean = false;
+let moveComplete: boolean = true;
 
 // reset board
 router.post("/new", async (req: Request, res: Response) => {
   chess = new Chess();
-  res.send({ fen: chess.fen() });
+  moveComplete=true;
+  res.send({
+    fen: chess.fen(),
+    turn: chess.turn(),
+    moveComplete: moveComplete,
+    lastMove: chess.history({ verbose: true }).pop(),
+  });
 });
 
 // get board positions
 router.get("/", async (req: Request, res: Response) => {
-  res.send({ board: chess.board(), turn: chess.turn() });
+  res.send({
+    fen: chess.fen(),
+    turn: chess.turn(),
+    moveComplete: moveComplete,
+    lastMove: chess.history({ verbose: true }).pop(),
+  });
 });
 
 // get board positions in ascii
@@ -24,12 +35,13 @@ router.get("/ascii", async (req: Request, res: Response) => {
 // post move
 router.post("/move", async (req: Request, res: Response) => {
   chess.move(req.body);
-  res.send({ fen: chess.fen(), turn: chess.turn() });
-});
-
-// get board fen
-router.get("/fen", async (req: Request, res: Response) => {
-  res.send({ fen: chess.fen(), turn: chess.turn() });
+  moveComplete=false;
+  res.send({
+    fen: chess.fen(),
+    turn: chess.turn(),
+    moveComplete: moveComplete,
+    lastMove: chess.history({ verbose: true }).pop(),
+  });
 });
 
 // get board status
@@ -45,12 +57,23 @@ router.get("/moveComplete", async (req: Request, res: Response) => {
 // set move status
 router.post("/moveComplete", async (req: Request, res: Response) => {
   moveComplete = req.body.moveComplete;
-  res.send("Updated move status.");
+  res.send(moveComplete);
 });
 
 // get last move
 router.get("/lastMove", async (req: Request, res: Response) => {
   res.send({ lastMove: chess.history({ verbose: true }).pop() });
+});
+
+// get last move
+router.post("/undo", async (req: Request, res: Response) => {
+  chess.undo();
+  res.send({
+    fen: chess.fen(),
+    turn: chess.turn(),
+    moveComplete: moveComplete,
+    lastMove: chess.history({ verbose: true }).pop(),
+  });
 });
 
 export default router;
