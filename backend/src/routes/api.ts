@@ -65,15 +65,4 @@ router.get("/lastMove", async (req: Request, res: Response) => {
   res.send({ lastMove: chess.history({ verbose: true }).pop() });
 });
 
-// get last move
-router.post("/undo", async (req: Request, res: Response) => {
-  chess.undo();
-  res.send({
-    fen: chess.fen(),
-    turn: chess.turn(),
-    moveComplete: moveComplete,
-    lastMove: chess.history({ verbose: true }).pop(),
-  });
-});
-
 export default router;

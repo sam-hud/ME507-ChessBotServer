@@ -121,13 +121,6 @@ export default function Home() {
         >
           New Game
         </button>
-        <button
-          onClick={() => {
-            undoMove();
-          }}
-        >
-          Undo
-        </button>
       </div>
     </div>
   );
