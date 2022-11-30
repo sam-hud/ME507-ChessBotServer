@@ -34,10 +34,11 @@ router.get("/ascii", async (req: Request, res: Response) => {
 
 // post move
 router.post("/move", async (req: Request, res: Response) => {
-  chess.move(req.body);
   if (chess.moves({ square: req.body.from }).includes(req.body.to)) {
     //Check if move is valid
     moveComplete = false;
+  } else {
+    chess.move(req.body);
   }
   res.send({
     fen: chess.fen(),

@@ -31,7 +31,7 @@ export default function Home() {
 
   /* Fetch current game data on page load */
   useEffect(() => {
-    fetch("https://chessbotapi.onrender.com")
+    fetch("https://chessbotapi.onrender.com/")
       .then((res) => res.json())
       .then((data) => {
         setGame(data);
@@ -41,7 +41,7 @@ export default function Home() {
   /* Fetch current game data every 2s */
   useEffect(() => {
     const interval = setInterval(() => {
-      fetch("https://chessbotapi.onrender.com")
+      fetch("https://chessbotapi.onrender.com/")
         .then((res) => res.json())
         .then((data) => {
           setGame(data);
