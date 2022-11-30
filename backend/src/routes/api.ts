@@ -8,7 +8,7 @@ let moveComplete: boolean = true;
 // reset board
 router.post("/new", async (req: Request, res: Response) => {
   chess = new Chess();
-  moveComplete=true;
+  moveComplete = true;
   res.send({
     fen: chess.fen(),
     turn: chess.turn(),
@@ -35,7 +35,10 @@ router.get("/ascii", async (req: Request, res: Response) => {
 // post move
 router.post("/move", async (req: Request, res: Response) => {
   chess.move(req.body);
-  moveComplete=false;
+  if (chess.moves({ square: req.body.from }).includes(req.body.to)) {
+    //Check if move is valid
+    moveComplete = false;
+  }
   res.send({
     fen: chess.fen(),
     turn: chess.turn(),
