@@ -1,5 +1,6 @@
 import express, { Request, Response, Router } from "express";
 import { Chess } from "chess.js";
+import e from "express";
 
 const router: Router = express.Router();
 let chess = new Chess();
@@ -35,12 +36,12 @@ router.get("/ascii", async (req: Request, res: Response) => {
 // post move
 router.post("/move", async (req: Request, res: Response) => {
   const newMove = { from: req.body.from, to: req.body.to };
-  if (newMove === chess.move(newMove)) {
-    //Check if move is invalid
-    acceptMoves = true; // If move is invalid, keep accepting moves
-  } else {
-    // Stop accepting moves if move is valid
+  if (chess.move(newMove) !== null) {
+    //If move is valid, submit move and stop accepting moves
+    chess.move(newMove);
     acceptMoves = false;
+  } else {
+    acceptMoves = true; // If move is invalid , keep accepting moves
   }
 
   res.send({
