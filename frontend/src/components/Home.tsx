@@ -9,7 +9,7 @@ export default function Home() {
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
   );
   const [feedback, setFeedback] = useState("White's turn"); //Feedback header
-  const [status, setStatus] = useState("Move in progress. Please wait."); //Feedback header
+  const [status, setStatus] = useState("Move in progress, please wait."); //Feedback header
   const [game, setGame] = useState<apiData>({
     fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     turn: "w",
@@ -65,7 +65,7 @@ export default function Home() {
     if (game.acceptMoves) {
       setStatus("Move complete. Waiting for input");
     } else {
-      setStatus("Move in progress, please wait");
+      setStatus("Move in progress, please wait.");
     }
   }, [game.acceptMoves]);
 
@@ -102,7 +102,7 @@ export default function Home() {
       sendMove({ from: sourceSquare, to: targetSquare });
       setStatus("Move sent.");
     } else {
-      setStatus("Move in progress. Please wait.");
+      setStatus("Move in progress, please wait.");
     }
     return true;
   }
