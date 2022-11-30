@@ -13,7 +13,7 @@ export default function Home() {
   const [game, setGame] = useState<apiData>({
     fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     turn: "w",
-    moveComplete: true,
+    acceptMoves: true,
     lastMove: { from: "", to: "", promotion: "" },
   }); //Data from the API
 
@@ -25,7 +25,7 @@ export default function Home() {
   interface apiData {
     fen: string;
     turn: string;
-    moveComplete: boolean;
+    acceptMoves: boolean;
     lastMove: move;
   }
 
@@ -62,12 +62,12 @@ export default function Home() {
 
   /* Update the status header when the move is complete */
   useEffect(() => {
-    if (game.moveComplete) {
+    if (game.acceptMoves) {
       setStatus("Move complete. Waiting for input");
     } else {
       setStatus("Move in progress, please wait");
     }
-  }, [game.moveComplete]);
+  }, [game.acceptMoves]);
 
   /* Send move to api */
   function sendMove(move: move | undefined) {
@@ -98,7 +98,7 @@ export default function Home() {
 
   /* Handle user input (when piece is dropped) */
   function onDrop(sourceSquare: string, targetSquare: string) {
-    if (game.moveComplete) {
+    if (game.acceptMoves) {
       sendMove({ from: sourceSquare, to: targetSquare });
       setStatus("Move sent.");
     } else {

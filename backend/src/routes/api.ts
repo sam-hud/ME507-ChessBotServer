@@ -3,16 +3,16 @@ import { Chess } from "chess.js";
 
 const router: Router = express.Router();
 let chess = new Chess();
-let moveComplete: boolean = true;
+let acceptMoves: boolean = true;
 
 // reset board
 router.post("/new", async (req: Request, res: Response) => {
   chess = new Chess();
-  moveComplete = true;
+  acceptMoves = true;
   res.send({
     fen: chess.fen(),
     turn: chess.turn(),
-    moveComplete: moveComplete,
+    acceptMoves: acceptMoves,
     lastMove: chess.history({ verbose: true }).pop(),
   });
 });
@@ -22,7 +22,7 @@ router.get("/", async (req: Request, res: Response) => {
   res.send({
     fen: chess.fen(),
     turn: chess.turn(),
-    moveComplete: moveComplete,
+    acceptMoves: acceptMoves,
     lastMove: chess.history({ verbose: true }).pop(),
   });
 });
@@ -36,14 +36,15 @@ router.get("/ascii", async (req: Request, res: Response) => {
 router.post("/move", async (req: Request, res: Response) => {
   if (chess.moves({ square: req.body.from }).includes(req.body.to)) {
     //Check if move is valid
-    moveComplete = true; // Accept input
+    acceptMoves = true; // Accept input
   } else {
     chess.move(req.body);
+    acceptMoves = false; // Don't accept input (wait for move to complete)
   }
   res.send({
     fen: chess.fen(),
     turn: chess.turn(),
-    moveComplete: moveComplete,
+    moveComplete: acceptMoves,
     lastMove: chess.history({ verbose: true }).pop(),
   });
 });
@@ -54,14 +55,14 @@ router.get("/status", async (req: Request, res: Response) => {
 });
 
 // get move status
-router.get("/moveComplete", async (req: Request, res: Response) => {
-  res.send({ moveComplete: moveComplete });
+router.get("/acceptMoves", async (req: Request, res: Response) => {
+  res.send({ acceptMoves: acceptMoves });
 });
 
 // set move status
-router.post("/moveComplete", async (req: Request, res: Response) => {
-  moveComplete = req.body.moveComplete;
-  res.send(moveComplete);
+router.post("/acceptMoves", async (req: Request, res: Response) => {
+  acceptMoves = req.body.moveComplete;
+  res.send({ acceptMoves: acceptMoves });
 });
 
 // get last move
