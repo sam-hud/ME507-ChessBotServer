@@ -36,7 +36,7 @@ router.get("/ascii", async (req: Request, res: Response) => {
 router.post("/move", async (req: Request, res: Response) => {
   if (chess.moves({ square: req.body.from }).includes(req.body.to)) {
     //Check if move is valid
-    moveComplete = false;
+    moveComplete = true; // Accept input
   } else {
     chess.move(req.body);
   }
