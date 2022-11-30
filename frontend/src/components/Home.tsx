@@ -8,6 +8,14 @@ export default function Home() {
     // FEN string to change the board element
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
   );
+  const [feedback, setFeedback] = useState("White's turn"); //Feedback header
+  const [status, setStatus] = useState("Waiting for input"); //Feedback header
+  const [game, setGame] = useState<apiData>({
+    fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    turn: "w",
+    moveComplete: true,
+    lastMove: { from: "", to: "", promotion: "" },
+  }); //Data from the API
 
   interface move {
     from: string;
@@ -20,18 +28,10 @@ export default function Home() {
     moveComplete: boolean;
     lastMove: move;
   }
-  const [feedback, setFeedback] = useState("White's turn"); //Feedback header
-  const [status, setStatus] = useState("Waiting for input"); //Feedback header
-  const [game, setGame] = useState<apiData>({
-    fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    turn: "w",
-    moveComplete: true,
-    lastMove: { from: "", to: "", promotion: "" },
-  }); //Data from the API
 
   /* Fetch current game data on page load */
   useEffect(() => {
-    fetch("http://localhost:3001/")
+    fetch("https://chessbotapi.onrender/")
       .then((res) => res.json())
       .then((data) => {
         setGame(data);
@@ -41,7 +41,7 @@ export default function Home() {
   /* Fetch current game data every 2s */
   useEffect(() => {
     const interval = setInterval(() => {
-      fetch("http://localhost:3001/")
+      fetch("https://chessbotapi.onrender/")
         .then((res) => res.json())
         .then((data) => {
           setGame(data);
@@ -71,7 +71,7 @@ export default function Home() {
 
   /* Send move to api */
   function sendMove(move: move | undefined) {
-    fetch("http://localhost:3001/move", {
+    fetch("https://chessbotapi.onrender/move", {
       method: "POST",
       body: JSON.stringify(move),
       headers: {
@@ -87,7 +87,7 @@ export default function Home() {
 
   /* Create new game on api and reset board */
   function newGame() {
-    fetch("http://localhost:3001/new", {
+    fetch("https://chessbotapi.onrender/new", {
       method: "POST",
     })
       .then((res) => res.json())
