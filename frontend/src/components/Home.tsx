@@ -1,6 +1,5 @@
 import { Chessboard } from "react-chessboard";
-import { useState, useEffect, useRef } from "react";
-import e from "express";
+import { useState, useEffect } from "react";
 
 export default function Home() {
   /* useState variables for dynamically updating the page */
@@ -11,7 +10,7 @@ export default function Home() {
   const [feedback, setFeedback] = useState("White's turn"); //Feedback header
   const [status, setStatus] = useState("Move in progress, please wait."); //Feedback header
   const [game, setGame] = useState<apiData>({
-    fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    fen: "",
     turn: "w",
     acceptMoves: true,
     lastMove: { from: "", to: "", promotion: "" },
@@ -31,17 +30,18 @@ export default function Home() {
 
   /* Fetch current game data on page load */
   useEffect(() => {
-    fetch("https://chessbotapi.onrender.com/")
+    fetch("http://localhost:3001/")
       .then((res) => res.json())
       .then((data) => {
         setGame(data);
+        setFen(data.fen);
       });
   }, []);
 
   /* Fetch current game data every 2s */
   useEffect(() => {
     const interval = setInterval(() => {
-      fetch("https://chessbotapi.onrender.com/")
+      fetch("http://localhost:3001/")
         .then((res) => res.json())
         .then((data) => {
           setGame(data);
@@ -63,15 +63,15 @@ export default function Home() {
   /* Update the status header when the move is complete */
   useEffect(() => {
     if (game.acceptMoves) {
-      setStatus("Move complete. Waiting for input");
+      setStatus("Make a move!");
     } else {
       setStatus("Move in progress, please wait.");
     }
-  }, [game.acceptMoves]);
+  }, [game]);
 
   /* Send move to api */
-  function sendMove(move: move | undefined) {
-    fetch("https://chessbotapi.onrender.com/move", {
+  function sendMove(move: move) {
+    fetch("http://localhost:3001/move", {
       method: "POST",
       body: JSON.stringify(move),
       headers: {
@@ -81,26 +81,29 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => {
         setGame(data);
+        setFen(data.fen);
       });
-    return true;
   }
 
   /* Create new game on api and reset board */
   function newGame() {
-    fetch("https://chessbotapi.onrender.com/new", {
+    fetch("http://localhost:3001/new", {
       method: "POST",
     })
       .then((res) => res.json())
       .then((data) => {
         setGame(data);
+        setFen(data.fen);
       });
   }
 
   /* Handle user input (when piece is dropped) */
   function onDrop(sourceSquare: string, targetSquare: string) {
-    if (game.acceptMoves) {
-      sendMove({ from: sourceSquare, to: targetSquare });
+    if (sourceSquare === targetSquare) {
+      return true; //If the piece is dropped on the same square, do nothing
+    } else if (game.acceptMoves) {
       setStatus("Move sent.");
+      sendMove({ from: sourceSquare, to: targetSquare });
     } else {
       setStatus("Move in progress, please wait.");
     }
@@ -113,7 +116,7 @@ export default function Home() {
       <div className="flex-content">
         <h2>{feedback}</h2>
         <h3>{status}</h3>
-        <Chessboard position={game.fen} onPieceDrop={onDrop} boardWidth={350} />
+        <Chessboard position={fen} onPieceDrop={onDrop} boardWidth={350} />
         <button
           onClick={() => {
             newGame();

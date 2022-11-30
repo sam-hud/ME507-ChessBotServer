@@ -34,23 +34,21 @@ router.get("/ascii", async (req: Request, res: Response) => {
 
 // post move
 router.post("/move", async (req: Request, res: Response) => {
-  if (chess.moves({ square: req.body.from }).includes(req.body.to)) {
-    chess.move(req.body);
-    acceptMoves = false; // Don't accept input (wait for move to complete)
+  const newMove = { from: req.body.from, to: req.body.to };
+  if (newMove === chess.move(newMove)) {
+    //Check if move is invalid
+    acceptMoves = true; // If move is invalid, keep accepting moves
   } else {
-    //If move is invalid, continue accepting moves
-    acceptMoves = true; // Accept input
+    // Stop accepting moves if move is valid
+    acceptMoves = false;
   }
+
   res.send({
     fen: chess.fen(),
     turn: chess.turn(),
     acceptMoves: acceptMoves,
     lastMove: chess.history({ verbose: true }).pop(),
   });
-});
-
-router.post("/move2", async (req: Request, res: Response) => {
-  res.send(chess.moves({ square: req.body.from }).includes(req.body.to));
 });
 
 // get board status
