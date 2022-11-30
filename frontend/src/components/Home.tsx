@@ -9,7 +9,7 @@ export default function Home() {
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
   );
   const [feedback, setFeedback] = useState("White's turn"); //Feedback header
-  const [status, setStatus] = useState("Waiting for input"); //Feedback header
+  const [status, setStatus] = useState("Move in progress. Please wait."); //Feedback header
   const [game, setGame] = useState<apiData>({
     fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     turn: "w",
@@ -100,7 +100,7 @@ export default function Home() {
   function onDrop(sourceSquare: string, targetSquare: string) {
     if (game.moveComplete) {
       sendMove({ from: sourceSquare, to: targetSquare });
-      setStatus("Move sent");
+      setStatus("Move sent.");
     } else {
       setStatus("Move in progress. Please wait.");
     }
