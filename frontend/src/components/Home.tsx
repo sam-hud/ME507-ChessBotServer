@@ -9,6 +9,7 @@ export default function Home() {
   );
   const [feedback, setFeedback] = useState("White's turn"); //Feedback header
   const [status, setStatus] = useState("Move in progress, please wait."); //Feedback header
+  const [side, setSide] = useState<"white" | "black">("white"); //Side displayed on the board
   const [game, setGame] = useState<apiData>({
     fen: "",
     turn: "w",
@@ -30,7 +31,7 @@ export default function Home() {
 
   /* Fetch current game data on page load */
   useEffect(() => {
-    fetch("https://chessbotapi.onrender.com/")
+    fetch("http://localhost:3001/")
       .then((res) => res.json())
       .then((data) => {
         setGame(data);
@@ -41,7 +42,7 @@ export default function Home() {
   /* Fetch current game data every 2s */
   useEffect(() => {
     const interval = setInterval(() => {
-      fetch("https://chessbotapi.onrender.com/")
+      fetch("http://localhost:3001/")
         .then((res) => res.json())
         .then((data) => {
           setGame(data);
@@ -71,7 +72,7 @@ export default function Home() {
 
   /* Send move to api */
   function sendMove(move: move) {
-    fetch("https://chessbotapi.onrender.com/move", {
+    fetch("http://localhost:3001/move", {
       method: "POST",
       body: JSON.stringify(move),
       headers: {
@@ -87,7 +88,7 @@ export default function Home() {
 
   /* Create new game on api and reset board */
   function newGame() {
-    fetch("https://chessbotapi.onrender.com/new", {
+    fetch("http://localhost:3001/new", {
       method: "POST",
     })
       .then((res) => res.json())
@@ -116,13 +117,29 @@ export default function Home() {
       <div className="flex-content">
         <h2>{feedback}</h2>
         <h3>{status}</h3>
-        <Chessboard position={fen} onPieceDrop={onDrop} boardWidth={350} />
+        <Chessboard
+          position={fen}
+          onPieceDrop={onDrop}
+          boardWidth={350}
+          boardOrientation={side}
+        />
         <button
           onClick={() => {
             newGame();
           }}
         >
           New Game
+        </button>
+        <button
+          onClick={() => {
+            if (side === "white") {
+              setSide("black");
+            } else {
+              setSide("white");
+            }
+          }}
+        >
+          Flip board
         </button>
       </div>
     </div>
