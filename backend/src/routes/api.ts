@@ -6,26 +6,26 @@ const router: Router = express.Router();
 let chess = new Chess();
 let acceptMoves: boolean = true;
 
+function boardState() {
+  return {
+    fen: chess.fen(),
+    turn: chess.turn(),
+    acceptMoves: acceptMoves,
+    lastMove: chess.history({ verbose: true }).pop(),
+    isNewGame: chess.history().length === 0,
+  };
+}
+
 // reset board
 router.post("/new", async (req: Request, res: Response) => {
   chess = new Chess();
   acceptMoves = true;
-  res.send({
-    fen: chess.fen(),
-    turn: chess.turn(),
-    acceptMoves: acceptMoves,
-    lastMove: chess.history({ verbose: true }).pop(),
-  });
+  res.send();
 });
 
 // get board positions
 router.get("/", async (req: Request, res: Response) => {
-  res.send({
-    fen: chess.fen(),
-    turn: chess.turn(),
-    acceptMoves: acceptMoves,
-    lastMove: chess.history({ verbose: true }).pop(),
-  });
+  res.send(boardState());
 });
 
 // get board positions in ascii
@@ -44,17 +44,7 @@ router.post("/move", async (req: Request, res: Response) => {
     acceptMoves = true; // If move is invalid , keep accepting moves
   }
 
-  res.send({
-    fen: chess.fen(),
-    turn: chess.turn(),
-    acceptMoves: acceptMoves,
-    lastMove: chess.history({ verbose: true }).pop(),
-  });
-});
-
-// get board status
-router.get("/status", async (req: Request, res: Response) => {
-  res.send({ status: chess.isGameOver() });
+  res.send(boardState());
 });
 
 // get move status
@@ -71,6 +61,10 @@ router.post("/acceptMoves", async (req: Request, res: Response) => {
 // get last move
 router.get("/lastMove", async (req: Request, res: Response) => {
   res.send({ lastMove: chess.history({ verbose: true }).pop() });
+});
+
+router.get("/isNewGame", async (req: Request, res: Response) => {
+  res.send({ isNewGame: chess.history().length === 0 });
 });
 
 export default router;

@@ -3,15 +3,11 @@ import { useState, useEffect } from "react";
 
 export default function Home() {
   /* useState variables for dynamically updating the page */
-  const [fen, setFen] = useState(
-    // FEN string to change the board element
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-  );
   const [feedback, setFeedback] = useState("White's turn"); //Feedback header
   const [status, setStatus] = useState("Move in progress, please wait."); //Feedback header
   const [side, setSide] = useState<"white" | "black">("white"); //Side displayed on the board
   const [game, setGame] = useState<apiData>({
-    fen: "",
+    fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     turn: "w",
     acceptMoves: true,
     lastMove: { from: "", to: "", promotion: "" },
@@ -35,7 +31,6 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => {
         setGame(data);
-        setFen(data.fen);
       });
   }, []);
 
@@ -82,7 +77,20 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => {
         setGame(data);
-        setFen(data.fen);
+      });
+  }
+
+  function moveConfirm() {
+    fetch("https://chessbotapi.onrender.com/move", {
+      method: "POST",
+      body: JSON.stringify({ acceptMove: true }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setGame(data);
       });
   }
 
@@ -94,7 +102,6 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => {
         setGame(data);
-        setFen(data.fen);
       });
   }
 
@@ -118,7 +125,7 @@ export default function Home() {
         <h2>{feedback}</h2>
         <h3>{status}</h3>
         <Chessboard
-          position={fen}
+          position={game.fen}
           onPieceDrop={onDrop}
           boardWidth={350}
           boardOrientation={side}
@@ -141,6 +148,9 @@ export default function Home() {
         >
           Flip board
         </button>
+      </div>
+      <div>
+        <button onClick={() => moveConfirm()}>Force move done</button>
       </div>
     </div>
   );
