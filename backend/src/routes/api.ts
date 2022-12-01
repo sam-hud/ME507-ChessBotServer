@@ -60,7 +60,7 @@ router.post("/acceptMoves", async (req: Request, res: Response) => {
 
 // get last move
 router.get("/lastMove", async (req: Request, res: Response) => {
-  res.send({ lastMove: chess.history({ verbose: true }).pop() });
+  res.send(chess.history({ verbose: true }).pop());
 });
 
 router.get("/isNewGame", async (req: Request, res: Response) => {

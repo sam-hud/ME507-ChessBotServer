@@ -49,17 +49,23 @@ export default function Home() {
 
   /* Update the feedback header when the turn changes */
   useEffect(() => {
+    feedbackHandler();
+  }, [game.turn, side]);
+
+  function feedbackHandler() {
     if (game.turn === "w") {
       setFeedback("White's turn");
     } else if (game.turn === "b") {
       setFeedback("Black's turn");
     }
-  }, [game.turn]);
+  }
 
   /* Update the status header when the move is complete */
   useEffect(() => {
-    if (game.acceptMoves) {
-      setStatus("Make a move!");
+    if (game.acceptMoves && game.turn === side.charAt(0)) {
+      setStatus("It's your turn!");
+    } else if (game.acceptMoves) {
+      setStatus("It's your opponent's turn.");
     } else {
       setStatus("Move in progress, please wait.");
     }
@@ -80,6 +86,7 @@ export default function Home() {
       });
   }
 
+  /* Force move confirm */
   function moveConfirm() {
     fetch("https://chessbotapi.onrender.com/move", {
       method: "POST",
@@ -109,11 +116,11 @@ export default function Home() {
   function onDrop(sourceSquare: string, targetSquare: string) {
     if (sourceSquare === targetSquare) {
       return true; //If the piece is dropped on the same square, do nothing
-    } else if (game.acceptMoves) {
+    } else if (game.acceptMoves && game.turn === side.charAt(0)) {
       setStatus("Move sent.");
       sendMove({ from: sourceSquare, to: targetSquare });
     } else {
-      setStatus("Move in progress, please wait.");
+      setStatus("Not your turn, please wait.");
     }
     return true;
   }
