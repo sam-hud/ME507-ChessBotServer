@@ -46,6 +46,7 @@ export default function Home() {
         .then((res) => res.json())
         .then((data) => {
           setGame(data);
+          setFen(data.fen);
         });
     }, 2000); //Fetch board status every 2s
 
@@ -64,7 +65,7 @@ export default function Home() {
   /* Update the status header when the move is complete */
   useEffect(() => {
     if (game.acceptMoves) {
-      setStatus("Make a move!");
+      setStatus("Chessbot is ready to move.");
     } else {
       setStatus("Move in progress, please wait.");
     }
