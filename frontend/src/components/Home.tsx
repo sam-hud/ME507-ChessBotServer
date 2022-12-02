@@ -3,15 +3,17 @@ import { useState, useEffect } from "react";
 
 export default function Home() {
   /* useState variables for dynamically updating the page */
-  const [feedback, setFeedback] = useState("White's turn"); //Feedback header
-  const [status, setStatus] = useState("Move in progress, please wait."); //Feedback header
+  const [turnHeader, setTurnHeader] = useState("White's turn"); //Feedback header
+  const [statusHeader, setStatusHeader] = useState(
+    "Move in progress, please wait."
+  ); //Feedback header
   const [side, setSide] = useState<"white" | "black">("white"); //Side displayed on the board
   const [game, setGame] = useState<apiData>({
     fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     turn: "w",
     acceptMoves: true,
-    lastMove: { from: "", to: "", promotion: "" },
   }); //Data from the API
+  const [fen, setFen] = useState(""); //FEN string for the board
 
   interface move {
     from: string;
@@ -22,7 +24,6 @@ export default function Home() {
     fen: string;
     turn: string;
     acceptMoves: boolean;
-    lastMove: move;
   }
 
   /* Fetch current game data on page load */
@@ -31,6 +32,7 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => {
         setGame(data);
+        setFen(data.fen);
       });
   }, []);
 
@@ -41,33 +43,33 @@ export default function Home() {
         .then((res) => res.json())
         .then((data) => {
           setGame(data);
+          setFen(data.fen);
+          console.log(data);
         });
     }, 2000); //Fetch board status every 2s
 
     return () => clearInterval(interval);
   }, []);
 
-  /* Update the feedback header when the turn changes */
+  /* Update the turn header when the turn changes */
   useEffect(() => {
-    feedbackHandler();
-  }, [game.turn, side]);
-
-  function feedbackHandler() {
-    if (game.turn === "w") {
-      setFeedback("White's turn");
-    } else if (game.turn === "b") {
-      setFeedback("Black's turn");
+    {
+      if (game.turn === "w") {
+        setTurnHeader("White's turn");
+      } else if (game.turn === "b") {
+        setTurnHeader("Black's turn");
+      }
     }
-  }
+  }, [game.turn, side]);
 
   /* Update the status header when the move is complete */
   useEffect(() => {
     if (game.acceptMoves && game.turn === side.charAt(0)) {
-      setStatus("It's your turn!");
+      setStatusHeader("It's your turn!");
     } else if (game.acceptMoves) {
-      setStatus("It's your opponent's turn.");
+      setStatusHeader("It's your opponent's turn.");
     } else {
-      setStatus("Move in progress, please wait.");
+      setStatusHeader("Move in progress, please wait.");
     }
   }, [game]);
 
@@ -117,10 +119,10 @@ export default function Home() {
     if (sourceSquare === targetSquare) {
       return true; //If the piece is dropped on the same square, do nothing
     } else if (game.acceptMoves && game.turn === side.charAt(0)) {
-      setStatus("Move sent.");
+      setStatusHeader("Move sent.");
       sendMove({ from: sourceSquare, to: targetSquare });
     } else {
-      setStatus("Not your turn, please wait.");
+      setStatusHeader("Not your turn, please wait.");
     }
     return true;
   }
@@ -129,10 +131,10 @@ export default function Home() {
   return (
     <div className="flex-container">
       <div className="flex-content">
-        <h2>{feedback}</h2>
-        <h3>{status}</h3>
+        <h2>{turnHeader}</h2>
+        <h3>{statusHeader}</h3>
         <Chessboard
-          position={game.fen}
+          position={fen}
           onPieceDrop={onDrop}
           boardWidth={350}
           boardOrientation={side}
