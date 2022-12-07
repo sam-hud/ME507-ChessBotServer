@@ -1,28 +1,26 @@
 # Webserver for ME507 Chessbot project
 
-This webserver acts as the controller for the chessbot. The backend runs a Chess engine which is controlled via a REST API. The ESP32 and the frontend submit requests to the backend to control the chess engine.
+This webserver acts as the controller for the chessbot. The backend runs a Chess engine which is controlled via a REST API, implemented using Express. The ESP32 and the frontend submit requests to the backend to control the chess engine.
 
-The frontend website can be found [here](https://me507-chessbot.netlify.app).
+The frontend website can be accessed [here](https://me507-chessbot.netlify.app).
 
-The backend api server is accessed [here](https://chessbotapi.onrender.com).
+The backend api server can be accessed [here](https://chessbotapi.onrender.com).
 
 ## Technology
 
 ### Frontend
 
-- Node.js
-- React.js
-- TypeScript
-- Chess.js
-- react-chessboard
+- [Node.js](https://nodejs.org/en/)
+- [React](https://reactjs.org)
+- [TypeScript](https://www.typescriptlang.org)
+- [react-chessboard](https://github.com/Clariity/react-chessboard)
 
 ### Backend
 
-- Node.js
-- Express.js
-- TypeScript
-- Chess.js
-- CORS
+- [Node.js](https://nodejs.org/en/)
+- [Express](https://expressjs.com)
+- [TypeScript](https://www.typescriptlang.org)
+- [Chess.js](https://github.com/jhlywa/chess.js/blob/master/README.md)
 
 ## Deployment
 
